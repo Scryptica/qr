@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import QRCodeStyling from 'qr-code-styling';
-import { FaWifi, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 // Create a simple WiFi icon as a data URL
 const wifiIconSvg = `
@@ -15,10 +15,10 @@ export default function Home() {
   const [encryption, setEncryption] = useState('WPA');
   const [showPassword, setShowPassword] = useState(false);
   const qrRef = useRef<HTMLDivElement | null>(null);
-  const qrCode = useRef<any>(null);
+  const qrCode = useRef<QRCodeStyling | null>(null);
   const [qrResolution, setQrResolution] = useState(512);
 
-  const generateQRCode = (customSize?: number) => {
+  const generateQRCode = () => {
     if (qrRef.current) {
       qrRef.current.innerHTML = '';
       const qrData = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
@@ -58,6 +58,7 @@ export default function Home() {
 
   useEffect(() => {
     generateQRCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ssid, password, encryption]);
 
   return (

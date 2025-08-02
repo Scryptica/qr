@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import QRCodeStyling from 'qr-code-styling';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaWifi, FaDownload } from 'react-icons/fa';
 
-// Create a simple WiFi icon as a data URL
+// Modern WiFi icon
 const wifiIconSvg = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-  <path fill="#000" d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28">
+  <path fill="#6b7280" d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
 </svg>`;
 const wifiIconDataUrl = `data:image/svg+xml;base64,${Buffer.from(wifiIconSvg).toString('base64')}`;
 
@@ -17,35 +17,38 @@ export default function Home() {
   const qrRef = useRef<HTMLDivElement | null>(null);
   const qrCode = useRef<QRCodeStyling | null>(null);
   const [qrResolution, setQrResolution] = useState(512);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const generateQRCode = () => {
     if (qrRef.current) {
       qrRef.current.innerHTML = '';
       const qrData = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
-      const size = 240;
+      
       const qrcode = new QRCodeStyling({
-        width: size,
-        height: size,
+        width: 200,
+        height: 200,
         type: 'canvas',
         data: qrData,
         image: wifiIconDataUrl,
         imageOptions: {
           hideBackgroundDots: true,
-          imageSize: 0.5,
+          imageSize: 0.4,
           margin: 8,
         },
         dotsOptions: {
-          color: '#000',
-          type: 'square',
+          color: '#374151',
+          type: 'rounded',
         },
         cornersDotOptions: {
-          type: 'square',
+          type: 'dot',
+          color: '#6b7280',
         },
         cornersSquareOptions: {
-          type: 'square',
+          type: 'extra-rounded',
+          color: '#4b5563',
         },
         backgroundOptions: {
-          color: '#fff',
+          color: '#ffffff',
         },
         qrOptions: {
           errorCorrectionLevel: 'H',
@@ -58,278 +61,407 @@ export default function Home() {
 
   useEffect(() => {
     generateQRCode();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ssid, password, encryption]);
 
+  const handleDownload = async () => {
+    if (!qrRef.current) return;
+    setIsGenerating(true);
+    
+    try {
+      const qrData = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
+      const qrcode = new QRCodeStyling({
+        width: qrResolution,
+        height: qrResolution,
+        type: 'canvas',
+        data: qrData,
+        image: wifiIconDataUrl,
+        imageOptions: {
+          hideBackgroundDots: true,
+          imageSize: 0.4,
+          margin: 8,
+        },
+        dotsOptions: {
+          color: '#374151',
+          type: 'rounded',
+        },
+        cornersDotOptions: {
+          type: 'dot',
+          color: '#6b7280',
+        },
+        cornersSquareOptions: {
+          type: 'extra-rounded',
+          color: '#4b5563',
+        },
+        backgroundOptions: {
+          color: '#ffffff',
+        },
+        qrOptions: {
+          errorCorrectionLevel: 'H',
+        },
+      });
+      await qrcode.download({ 
+        name: `wifi-qr-${ssid || 'network'}`, 
+        extension: 'png' 
+      });
+    } catch (error) {
+      console.error('Error downloading QR code:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 16px',
+    backgroundColor: '#374151', // Gray-700
+    border: '1px solid #4b5563', // Gray-600
+    borderRadius: '8px',
+    color: '#f9fafb',
+    fontSize: '14px',
+    fontWeight: '400',
+    outline: 'none',
+    transition: 'all 0.3s ease',
+    boxSizing: 'border-box' as const,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+  };
+
+  const labelStyle = {
+    display: 'block',
+    marginBottom: '6px',
+    color: '#d1d5db',
+    fontSize: '12px',
+    fontWeight: '500',
+    letterSpacing: '0.05em',
+    textTransform: 'uppercase' as const,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+  };
+
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        margin: 0,
-        backgroundColor: '#111111ff',
-        backgroundImage: `
-          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
-        `,
-        backgroundSize: '40px 40px',
-        backgroundPosition: '0 0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 0,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        fontFamily: 'Inter, Segoe UI, system-ui, sans-serif',
-        fontWeight: 400,
-        fontSize: '16px',
-        letterSpacing: '0.01em',
-        boxSizing: 'border-box',
-      }}
-    >
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#111827', // Gray-900
+      backgroundImage: `
+        linear-gradient(rgba(55, 65, 81, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(55, 65, 81, 0.1) 1px, transparent 1px)
+      `,
+      backgroundSize: '40px 40px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      boxSizing: 'border-box',
+      overflow: 'hidden',
+      margin: 0,
+    }}>
       <div style={{
-        background: 'rgba(36, 36, 36, 0.45)',
-        borderRadius: '20px',
-        padding: '40px 48px 36px 48px',
-        boxShadow: '0 8px 32px 0 rgba(0,0,0,0.37)',
-        maxWidth: '520px',
+        background: '#1f2937', // Gray-800
+        borderRadius: '16px',
+        padding: '32px',
+        maxWidth: '900px',
         width: '100%',
-        backdropFilter: 'blur(18px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(18px) saturate(180%)',
-        border: '1.5px solid rgba(255,255,255,0.13)',
-        boxSizing: 'border-box',
+        border: '1px solid #374151', // Gray-700
+        boxShadow: `
+          0 20px 25px -5px rgba(0, 0, 0, 0.4),
+          0 10px 10px -5px rgba(0, 0, 0, 0.3)
+        `,
+        display: 'flex',
+        gap: '32px',
+        alignItems: 'flex-start',
+        position: 'relative',
+        zIndex: 1,
       }}>
-        <h1 style={{
-          color: '#fff',
-          textAlign: 'center',
-          marginBottom: '22px',
-          fontSize: '1.6rem',
-          fontWeight: 600,
-          letterSpacing: '0.01em',
-        }}>WiFi QR Code Generator</h1>
-        
-        <form style={{ marginBottom: '22px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              color: '#fff',
-              fontSize: '0.98rem',
-              fontWeight: 500,
-              letterSpacing: '0.01em',
-            }}>SSID:</label>
-            <input
-              type="text"
-              value={ssid}
-              onChange={(e) => setSsid(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '11px 14px',
-                backgroundColor: 'rgba(40,40,40,0.85)',
-                border: '1.5px solid #444',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '1rem',
-                fontWeight: 400,
-                outline: 'none',
-                transition: 'border 0.2s',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-          <div>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              color: '#fff',
-              fontSize: '0.98rem',
-              fontWeight: 500,
-              letterSpacing: '0.01em',
-            }}>Password:</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '11px 14px',
-                  backgroundColor: 'rgba(40,40,40,0.85)',
-                  border: '1.5px solid #444',
-                  borderRadius: '8px',
-                  color: '#fff',
-                  fontSize: '1rem',
-                  fontWeight: 400,
-                  outline: 'none',
-                  transition: 'border 0.2s',
-                  boxSizing: 'border-box',
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  border: 'none',
-                  background: 'none',
-                  cursor: 'pointer',
-                  padding: '4px',
-                  color: '#aaa',
-                  fontSize: '1.1rem',
-                  outline: 'none',
-                }}
-              >
-                {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-              </button>
+        {/* Left Side - Form */}
+        <div style={{
+          flex: '1',
+          minWidth: '300px',
+        }}>
+          {/* Header */}
+          <div style={{
+            marginBottom: '24px',
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '16px',
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '48px',
+                height: '48px',
+                background: '#4b5563', // Gray-600
+                borderRadius: '12px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+              }}>
+                <FaWifi size={20} color="#ffffff" />
+              </div>
+              <div>
+                <h1 style={{
+                  color: '#f9fafb',
+                  fontSize: '24px',
+                  fontWeight: '600',
+                  margin: '0 0 4px 0',
+                  letterSpacing: '-0.025em',
+                }}>
+                  Generador QR WiFi
+                </h1>
+                <p style={{
+                  color: '#9ca3af',
+                  fontSize: '14px',
+                  margin: 0,
+                  fontWeight: '400',
+                }}>
+                  Comparte tu red WiFi fácilmente
+                </p>
+              </div>
             </div>
           </div>
-          <div>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              color: '#fff',
-              fontSize: '0.98rem',
-              fontWeight: 500,
-              letterSpacing: '0.01em',
-            }}>Encryption:</label>
-            <select
-              value={encryption}
-              onChange={(e) => setEncryption(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '11px 14px',
-                backgroundColor: 'rgba(40,40,40,0.85)',
-                border: '1.5px solid #444',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '1rem',
-                fontWeight: 400,
-                outline: 'none',
-                transition: 'border 0.2s',
-                boxSizing: 'border-box',
-                appearance: 'none',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none',
-              }}
-            >
-              <option value="WPA">WPA/WPA2</option>
-              <option value="WEP">WEP</option>
-              <option value="">None</option>
-            </select>
-          </div>
-        </form>
+
+          <form style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}>
+            <div>
+              <label style={labelStyle}>Nombre de Red (SSID)</label>
+              <input
+                type="text"
+                value={ssid}
+                onChange={(e) => setSsid(e.target.value)}
+                placeholder="Mi_Red_WiFi"
+                style={inputStyle}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#6b7280';
+                  e.currentTarget.style.backgroundColor = '#4b5563';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#4b5563';
+                  e.currentTarget.style.backgroundColor = '#374151';
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>Contraseña</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Contraseña de la red"
+                  style={{
+                    ...inputStyle,
+                    paddingRight: '50px',
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = '#6b7280';
+                    e.currentTarget.style.backgroundColor = '#4b5563';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = '#4b5563';
+                    e.currentTarget.style.backgroundColor = '#374151';
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    border: 'none',
+                    background: '#4b5563', // Gray-600
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    padding: '8px',
+                    color: '#9ca3af',
+                    outline: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#6b7280';
+                    e.currentTarget.style.color = '#f3f4f6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#4b5563';
+                    e.currentTarget.style.color = '#9ca3af';
+                  }}
+                >
+                  {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label style={labelStyle}>Tipo de Seguridad</label>
+              <select
+                value={encryption}
+                onChange={(e) => setEncryption(e.target.value)}
+                style={{
+                  ...inputStyle,
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"></polyline></svg>'
+                  )}")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 16px center',
+                  backgroundSize: '16px',
+                  paddingRight: '40px',
+                  cursor: 'pointer',
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#6b7280';
+                  e.currentTarget.style.backgroundColor = '#4b5563';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#4b5563';
+                  e.currentTarget.style.backgroundColor = '#374151';
+                }}
+              >
+                <option value="WPA">WPA/WPA2</option>
+                <option value="WEP">WEP</option>
+                <option value="">Ninguna</option>
+              </select>
+            </div>
+          </form>
+        </div>
+
+        {/* Right Side - QR Code */}
         <div style={{
-          position: 'relative',
-          borderRadius: '10px', // Rounded corners for square
-          background: '#fff',
-          width: '240px',
-          height: '240px',
-          margin: '0 auto 0 auto',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
-          padding: 0,
-          overflow: 'hidden',
+          gap: '20px',
         }}>
-          <div ref={qrRef} style={{
+          <div style={{
+            borderRadius: '16px',
+            background: '#ffffff',
             width: '240px',
             height: '240px',
-            background: 'transparent',
-            position: 'relative',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: 0,
-          }} />
-        </div>
-        <div style={{ marginTop: 18, textAlign: 'center' }}>
-          <label style={{ color: '#fff', fontSize: '0.98rem', fontWeight: 500, marginRight: 10 }}>
-            Download QR:
-          </label>
-          <select
-            value={qrResolution}
-            onChange={e => setQrResolution(Number(e.target.value))}
-            style={{
-              padding: '7px 14px',
-              borderRadius: '7px',
-              border: '1.2px solid #444',
-              background: 'rgba(40,40,40,0.85)',
-              color: '#fff',
-              fontSize: '1rem',
-              marginRight: 10,
-              outline: 'none',
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none',
-            }}
-          >
-            <option value={256}>256x256</option>
-            <option value={512}>512x512</option>
-            <option value={1024}>1024x1024</option>
-            <option value={2048}>2048x2048</option>
-          </select>
-          <button
-            type="button"
-            onClick={async () => {
-              if (!qrRef.current) return;
-              // Save current QR code
-              const prev = qrRef.current.innerHTML;
-              // Regenerate at selected resolution
-              const qrData = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
-              const qrcode = new QRCodeStyling({
-                width: qrResolution,
-                height: qrResolution,
-                type: 'canvas',
-                data: qrData,
-                image: wifiIconDataUrl,
-                imageOptions: {
-                  hideBackgroundDots: true,
-                  imageSize: 0.5,
-                  margin: 8,
-                },
-                dotsOptions: {
-                  color: '#000',
-                  type: 'square',
-                },
-                cornersDotOptions: {
-                  type: 'square',
-                },
-                cornersSquareOptions: {
-                  type: 'square',
-                },
-                backgroundOptions: {
-                  color: '#fff',
-                },
-                qrOptions: {
-                  errorCorrectionLevel: 'H',
-                },
-              });
-              await qrcode.download({ name: `wifi-qr-${ssid || 'code'}`, extension: 'png' });
-              // Restore on-screen QR code
-              qrRef.current.innerHTML = prev;
-              generateQRCode();
-            }}
-            style={{
-              padding: '7px 22px',
-              borderRadius: '7px',
-              border: 'none',
-              background: 'linear-gradient(90deg, #4f8cff 0%, #2356c7 100%)',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '1rem',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px 0 rgba(79,140,255,0.10)',
-              transition: 'background 0.2s',
-            }}
-          >
-            Download
-          </button>
+            boxShadow: `
+              0 10px 15px -3px rgba(0, 0, 0, 0.3),
+              0 4px 6px -2px rgba(0, 0, 0, 0.2)
+            `,
+            border: '1px solid #374151',
+          }}>
+            <div ref={qrRef} style={{
+              width: '200px',
+              height: '200px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }} />
+          </div>
+
+          {/* Download Controls */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            width: '100%',
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '13px',
+            }}>
+              <label style={{
+                color: '#d1d5db',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+              }}>
+                Resolución:
+              </label>
+              <select
+                value={qrResolution}
+                onChange={(e) => setQrResolution(Number(e.target.value))}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #4b5563',
+                  background: '#374151',
+                  color: '#f9fafb',
+                  fontSize: '13px',
+                  fontWeight: '400',
+                  outline: 'none',
+                  appearance: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                <option value={256}>256x256</option>
+                <option value={512}>512x512</option>
+                <option value={1024}>1024x1024</option>
+                <option value={2048}>2048x2048</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={isGenerating}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                background: isGenerating 
+                  ? '#4b5563' 
+                  : '#6b7280', // Gray-500
+                color: '#ffffff',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: isGenerating ? 'not-allowed' : 'pointer',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxShadow: isGenerating 
+                  ? 'none' 
+                  : '0 4px 12px rgba(0, 0, 0, 0.3)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.025em',
+                width: '100%',
+                justifyContent: 'center',
+              }}
+              onMouseEnter={(e) => {
+                if (!isGenerating) {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.4)';
+                  e.currentTarget.style.background = '#4b5563';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isGenerating) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+                  e.currentTarget.style.background = '#6b7280';
+                }
+              }}
+            >
+              <FaDownload size={12} />
+              {isGenerating ? 'Generando...' : 'Descargar'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -36,7 +36,7 @@ export default function Home() {
     if (qrRef.current) {
       qrRef.current.innerHTML = '';
       const qrData = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
-      const qrSize = isMobile ? 120 : 200; // Mucho más pequeño en móviles
+      const qrSize = isMobile ? 120 : 200;
       
       const qrcode = new QRCodeStyling({
         width: qrSize,
@@ -126,12 +126,12 @@ export default function Home() {
 
   const inputStyle = {
     width: '100%',
-    padding: isMobile ? '10px 12px' : '12px 16px', // Reducido en móviles
+    padding: isMobile ? '10px 12px' : '12px 16px',
     backgroundColor: '#374151',
     border: '1px solid #4b5563',
-    borderRadius: isMobile ? '6px' : '8px', // Más pequeño en móviles
+    borderRadius: isMobile ? '6px' : '8px',
     color: '#f9fafb',
-    fontSize: '16px', // Fijo 16px para evitar zoom
+    fontSize: '16px',
     fontWeight: '400',
     outline: 'none',
     transition: 'all 0.3s ease',
@@ -141,7 +141,7 @@ export default function Home() {
 
   const labelStyle = {
     display: 'block',
-    marginBottom: isMobile ? '4px' : '6px', // Reducido en móviles
+    marginBottom: isMobile ? '4px' : '6px',
     color: '#d1d5db',
     fontSize: isMobile ? '12px' : '12px',
     fontWeight: '500',
@@ -150,9 +150,9 @@ export default function Home() {
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
   };
 
-  const containerPadding = isMobile ? '12px' : '32px'; // Muy reducido en móviles
-  const formGap = isMobile ? '16px' : '20px'; // Reducido en móviles
-  const qrSize = isMobile ? 140 : 240; // Más pequeño en móviles
+  const containerPadding = isMobile ? '12px' : '32px';
+  const formGap = isMobile ? '16px' : '20px';
+  const qrSize = isMobile ? 140 : 240;
   const qrContentSize = isMobile ? 120 : 200;
 
   return (
@@ -169,12 +169,12 @@ export default function Home() {
         linear-gradient(rgba(55, 65, 81, 0.1) 1px, transparent 1px),
         linear-gradient(90deg, rgba(55, 65, 81, 0.1) 1px, transparent 1px)
       `,
-      backgroundSize: isMobile ? '25px 25px' : '40px 40px', // Más pequeño en móviles
+      backgroundSize: isMobile ? '25px 25px' : '40px 40px',
       display: 'flex',
       alignItems: isMobile ? 'flex-start' : 'center',
       justifyContent: 'center',
-      padding: isMobile ? '8px' : '20px', // Muy reducido en móviles
-      paddingTop: isMobile ? '10px' : '20px', // Menos espacio superior
+      padding: isMobile ? '8px' : '20px',
+      paddingTop: isMobile ? '10px' : '20px',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       boxSizing: 'border-box',
       overflow: isMobile ? 'auto' : 'hidden',
@@ -182,11 +182,11 @@ export default function Home() {
     }}>
       <div style={{
         background: '#1f2937',
-        borderRadius: isMobile ? '8px' : '16px', // Más pequeño en móviles
+        borderRadius: isMobile ? '8px' : '16px',
         padding: containerPadding,
         maxWidth: isMobile ? '100%' : '900px',
         width: '100%',
-        maxHeight: isMobile ? 'calc(100vh - 20px)' : 'none', // Altura máxima en móviles
+        maxHeight: isMobile ? 'calc(100vh - 20px)' : 'none',
         border: '1px solid #374151',
         boxShadow: `
           0 20px 25px -5px rgba(0, 0, 0, 0.4),
@@ -194,39 +194,40 @@ export default function Home() {
         `,
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
-        gap: isMobile ? '16px' : '32px', // Reducido en móviles
-        alignItems: 'flex-start',
+        gap: isMobile ? '16px' : '32px',
+        alignItems: isMobile ? 'center' : 'flex-start', // Centrado en móviles
         position: 'relative',
         zIndex: 1,
-        overflow: isMobile ? 'auto' : 'visible', // Permitir scroll interno si es necesario
+        overflow: isMobile ? 'auto' : 'visible',
       }}>
         {/* Header - Más compacto en móvil */}
         {isMobile && (
           <div style={{
-            marginBottom: '4px', // Muy reducido
+            marginBottom: '4px',
+            width: '100%', // Ocupa todo el ancho
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px', // Reducido
+              gap: '8px',
               justifyContent: 'center',
             }}>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '32px', // Más pequeño
+                width: '32px',
                 height: '32px',
                 background: '#4b5563',
                 borderRadius: '8px',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
               }}>
-                <FaWifi size={14} color="#ffffff" /> {/* Icono más pequeño */}
+                <FaWifi size={14} color="#ffffff" />
               </div>
               <div>
                 <h1 style={{
                   color: '#f9fafb',
-                  fontSize: '18px', // Más pequeño
+                  fontSize: '18px',
                   fontWeight: '600',
                   margin: '0 0 1px 0',
                   letterSpacing: '-0.025em',
@@ -235,7 +236,7 @@ export default function Home() {
                 </h1>
                 <p style={{
                   color: '#9ca3af',
-                  fontSize: '11px', // Más pequeño
+                  fontSize: '11px',
                   margin: 0,
                   fontWeight: '400',
                 }}>
@@ -304,7 +305,7 @@ export default function Home() {
             gap: formGap,
           }}>
             <div>
-              <label style={labelStyle}>Red (SSID)</label> {/* Texto más corto */}
+              <label style={labelStyle}>Red (SSID)</label>
               <input
                 type="text"
                 value={ssid}
@@ -332,7 +333,7 @@ export default function Home() {
                   placeholder="Contraseña de la red"
                   style={{
                     ...inputStyle,
-                    paddingRight: isMobile ? '50px' : '50px',
+                    paddingRight: isMobile ? '45px' : '50px', // Ajustado para el botón más pequeño
                   }}
                   onFocus={(e) => {
                     e.currentTarget.style.borderColor = '#6b7280';
@@ -348,22 +349,22 @@ export default function Home() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
                     position: 'absolute',
-                    right: '8px',
+                    right: isMobile ? '10px' : '12px',
                     top: '50%',
                     transform: 'translateY(-50%)',
                     border: 'none',
                     background: '#4b5563',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    padding: isMobile ? '8px' : '8px',
+                    padding: '6px', // Reducido de 8px
                     color: '#9ca3af',
                     outline: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.3s ease',
-                    minWidth: '40px',
-                    minHeight: '40px',
+                    width: isMobile ? '28px' : '32px', // Tamaño fijo más pequeño
+                    height: isMobile ? '28px' : '32px', // Tamaño fijo más pequeño
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = '#6b7280';
@@ -374,13 +375,13 @@ export default function Home() {
                     e.currentTarget.style.color = '#9ca3af';
                   }}
                 >
-                  {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                  {showPassword ? <FaEyeSlash size={12} /> : <FaEye size={12} />} {/* Icono más pequeño */}
                 </button>
               </div>
             </div>
 
             <div>
-              <label style={labelStyle}>Seguridad</label> {/* Texto más corto */}
+              <label style={labelStyle}>Seguridad</label>
               <select
                 value={encryption}
                 onChange={(e) => setEncryption(e.target.value)}
@@ -415,12 +416,12 @@ export default function Home() {
           </form>
         </div>
 
-        {/* QR Code Section - Más compacto */}
+        {/* QR Code Section - Centrado en móviles */}
         <div style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: isMobile ? '12px' : '20px', // Reducido en móviles
+          gap: isMobile ? '12px' : '20px',
           width: isMobile ? '100%' : 'auto',
         }}>
           <div style={{
@@ -436,7 +437,7 @@ export default function Home() {
               0 4px 6px -2px rgba(0, 0, 0, 0.2)
             `,
             border: '1px solid #374151',
-            margin: isMobile ? '0 auto' : '0',
+            margin: '0 auto', // Centrado tanto en móviles como desktop
           }}>
             <div ref={qrRef} style={{
               width: `${qrContentSize}px`,
@@ -447,39 +448,55 @@ export default function Home() {
             }} />
           </div>
 
-          {/* Download Controls - Más compacto */}
+          {/* Download Controls - Centrado y más compacto */}
           <div style={{
             display: 'flex',
-            flexDirection: isMobile ? 'row' : 'column', // Horizontal en móviles para ahorrar espacio
+            flexDirection: isMobile ? 'column' : 'column', // Cambiado a column para mejor centrado
             alignItems: 'center',
-            gap: isMobile ? '8px' : '12px',
+            gap: isMobile ? '10px' : '12px',
             width: '100%',
-            justifyContent: 'space-between',
+            justifyContent: 'center', // Centrado
           }}>
-            <select
-              value={qrResolution}
-              onChange={(e) => setQrResolution(Number(e.target.value))}
-              style={{
-                padding: isMobile ? '8px 10px' : '8px 12px',
-                borderRadius: '6px',
-                border: '1px solid #4b5563',
-                background: '#374151',
-                color: '#f9fafb',
-                fontSize: isMobile ? '12px' : '13px', // Más pequeño
-                fontWeight: '400',
-                outline: 'none',
-                appearance: 'none',
-                cursor: 'pointer',
-                minWidth: isMobile ? '80px' : 'auto', // Más compacto
-                flex: isMobile ? '1' : 'none',
-              }}
-            >
-              <option value={256}>256px</option>
-              <option value={512}>512px</option>
-              <option value={1024}>1024px</option>
-              <option value={2048}>2048px</option>
-            </select>
+            {/* Label y select centrados */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              justifyContent: 'center', // Centrado
+            }}>
+              <label style={{
+                color: '#d1d5db',
+                fontWeight: '500',
+                fontSize: isMobile ? '11px' : '13px',
+                whiteSpace: 'nowrap',
+              }}>
+                Resolución:
+              </label>
+              <select
+                value={qrResolution}
+                onChange={(e) => setQrResolution(Number(e.target.value))}
+                style={{
+                  padding: isMobile ? '6px 8px' : '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #4b5563',
+                  background: '#374151',
+                  color: '#f9fafb',
+                  fontSize: isMobile ? '11px' : '13px',
+                  fontWeight: '400',
+                  outline: 'none',
+                  appearance: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                }}
+              >
+                <option value={256}>256px</option>
+                <option value={512}>512px</option>
+                <option value={1024}>1024px</option>
+                <option value={2048}>2048px</option>
+              </select>
+            </div>
 
+            {/* Botón centrado */}
             <button
               type="button"
               onClick={handleDownload}
@@ -487,8 +504,8 @@ export default function Home() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px', // Reducido
-                padding: isMobile ? '8px 12px' : '12px 20px', // Más compacto
+                gap: '6px',
+                padding: isMobile ? '8px 16px' : '12px 20px',
                 borderRadius: '6px',
                 border: 'none',
                 background: isGenerating 
@@ -496,7 +513,7 @@ export default function Home() {
                   : '#6b7280',
                 color: '#ffffff',
                 fontWeight: '600',
-                fontSize: isMobile ? '12px' : '14px', // Más pequeño
+                fontSize: isMobile ? '12px' : '14px',
                 cursor: isGenerating ? 'not-allowed' : 'pointer',
                 outline: 'none',
                 transition: 'all 0.3s ease',
@@ -505,10 +522,10 @@ export default function Home() {
                   : '0 4px 12px rgba(0, 0, 0, 0.3)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.025em',
-                flex: isMobile ? '2' : 'none', // Más espacio para el botón
                 justifyContent: 'center',
-                minHeight: '36px', // Más compacto
+                minHeight: '36px',
                 whiteSpace: 'nowrap',
+                width: isMobile ? '120px' : 'auto', // Ancho fijo en móviles para mejor centrado
               }}
               onMouseEnter={(e) => {
                 if (!isGenerating) {
@@ -525,7 +542,7 @@ export default function Home() {
                 }
               }}
             >
-              <FaDownload size={10} /> {/* Icono más pequeño */}
+              <FaDownload size={10} />
               {isGenerating ? 'Generando...' : 'Descargar'}
             </button>
           </div>

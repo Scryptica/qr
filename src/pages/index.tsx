@@ -18,15 +18,29 @@ export default function Home() {
   const qrCode = useRef<QRCodeStyling | null>(null);
   const [qrResolution, setQrResolution] = useState(512);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar si es móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const generateQRCode = () => {
     if (qrRef.current) {
       qrRef.current.innerHTML = '';
       const qrData = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
+      const qrSize = isMobile ? 160 : 200;
       
       const qrcode = new QRCodeStyling({
-        width: 200,
-        height: 200,
+        width: qrSize,
+        height: qrSize,
         type: 'canvas',
         data: qrData,
         image: wifiIconDataUrl,
@@ -61,7 +75,7 @@ export default function Home() {
 
   useEffect(() => {
     generateQRCode();
-  }, [ssid, password, encryption]);
+  }, [ssid, password, encryption, isMobile]);
 
   const handleDownload = async () => {
     if (!qrRef.current) return;
@@ -112,12 +126,12 @@ export default function Home() {
 
   const inputStyle = {
     width: '100%',
-    padding: '12px 16px',
-    backgroundColor: '#374151', // Gray-700
-    border: '1px solid #4b5563', // Gray-600
+    padding: isMobile ? '14px 16px' : '12px 16px',
+    backgroundColor: '#374151',
+    border: '1px solid #4b5563',
     borderRadius: '8px',
     color: '#f9fafb',
-    fontSize: '14px',
+    fontSize: isMobile ? '16px' : '14px', // 16px previene zoom en móviles
     fontWeight: '400',
     outline: 'none',
     transition: 'all 0.3s ease',
@@ -127,14 +141,19 @@ export default function Home() {
 
   const labelStyle = {
     display: 'block',
-    marginBottom: '6px',
+    marginBottom: isMobile ? '8px' : '6px',
     color: '#d1d5db',
-    fontSize: '12px',
+    fontSize: isMobile ? '14px' : '12px',
     fontWeight: '500',
     letterSpacing: '0.05em',
     textTransform: 'uppercase' as const,
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
   };
+
+  const containerPadding = isMobile ? '20px' : '32px';
+  const formGap = isMobile ? '24px' : '20px';
+  const qrSize = isMobile ? 200 : 240;
+  const qrContentSize = isMobile ? 160 : 200;
 
   return (
     <div style={{
@@ -145,78 +164,77 @@ export default function Home() {
       bottom: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: '#111827', // Gray-900
+      backgroundColor: '#111827',
       backgroundImage: `
         linear-gradient(rgba(55, 65, 81, 0.1) 1px, transparent 1px),
         linear-gradient(90deg, rgba(55, 65, 81, 0.1) 1px, transparent 1px)
       `,
-      backgroundSize: '40px 40px',
+      backgroundSize: isMobile ? '30px 30px' : '40px 40px',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: isMobile ? 'flex-start' : 'center',
       justifyContent: 'center',
-      padding: '20px',
+      padding: isMobile ? '10px' : '20px',
+      paddingTop: isMobile ? '20px' : '20px',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       boxSizing: 'border-box',
-      overflow: 'hidden',
+      overflow: isMobile ? 'auto' : 'hidden',
       margin: 0,
     }}>
       <div style={{
-        background: '#1f2937', // Gray-800
-        borderRadius: '16px',
-        padding: '32px',
-        maxWidth: '900px',
+        background: '#1f2937',
+        borderRadius: isMobile ? '12px' : '16px',
+        padding: containerPadding,
+        maxWidth: isMobile ? '100%' : '900px',
         width: '100%',
-        border: '1px solid #374151', // Gray-700
+        border: '1px solid #374151',
         boxShadow: `
           0 20px 25px -5px rgba(0, 0, 0, 0.4),
           0 10px 10px -5px rgba(0, 0, 0, 0.3)
         `,
         display: 'flex',
-        gap: '32px',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? '24px' : '32px',
         alignItems: 'flex-start',
         position: 'relative',
         zIndex: 1,
+        minHeight: isMobile ? 'auto' : 'auto',
       }}>
-        {/* Left Side - Form */}
-        <div style={{
-          flex: '1',
-          minWidth: '300px',
-        }}>
-          {/* Header */}
+        {/* Header - Solo en móvil en la parte superior */}
+        {isMobile && (
           <div style={{
-            marginBottom: '24px',
+            marginBottom: '8px',
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              marginBottom: '16px',
+              justifyContent: 'center',
             }}>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '48px',
-                height: '48px',
-                background: '#4b5563', // Gray-600
-                borderRadius: '12px',
+                width: '40px',
+                height: '40px',
+                background: '#4b5563',
+                borderRadius: '10px',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
               }}>
-                <FaWifi size={20} color="#ffffff" />
+                <FaWifi size={18} color="#ffffff" />
               </div>
               <div>
                 <h1 style={{
                   color: '#f9fafb',
-                  fontSize: '24px',
+                  fontSize: '20px',
                   fontWeight: '600',
-                  margin: '0 0 4px 0',
+                  margin: '0 0 2px 0',
                   letterSpacing: '-0.025em',
                 }}>
                   Generador QR WiFi
                 </h1>
                 <p style={{
                   color: '#9ca3af',
-                  fontSize: '14px',
+                  fontSize: '13px',
                   margin: 0,
                   fontWeight: '400',
                 }}>
@@ -225,11 +243,64 @@ export default function Home() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Form Section */}
+        <div style={{
+          flex: isMobile ? 'none' : '1',
+          minWidth: isMobile ? '100%' : '300px',
+          width: isMobile ? '100%' : 'auto',
+        }}>
+          {/* Header - Solo en desktop */}
+          {!isMobile && (
+            <div style={{
+              marginBottom: '24px',
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '16px',
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '48px',
+                  height: '48px',
+                  background: '#4b5563',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                }}>
+                  <FaWifi size={20} color="#ffffff" />
+                </div>
+                <div>
+                  <h1 style={{
+                    color: '#f9fafb',
+                    fontSize: '24px',
+                    fontWeight: '600',
+                    margin: '0 0 4px 0',
+                    letterSpacing: '-0.025em',
+                  }}>
+                    Generador QR WiFi
+                  </h1>
+                  <p style={{
+                    color: '#9ca3af',
+                    fontSize: '14px',
+                    margin: 0,
+                    fontWeight: '400',
+                  }}>
+                    Comparte tu red WiFi fácilmente
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
+            gap: formGap,
           }}>
             <div>
               <label style={labelStyle}>Nombre de Red (SSID)</label>
@@ -260,7 +331,7 @@ export default function Home() {
                   placeholder="Contraseña de la red"
                   style={{
                     ...inputStyle,
-                    paddingRight: '50px',
+                    paddingRight: isMobile ? '55px' : '50px',
                   }}
                   onFocus={(e) => {
                     e.currentTarget.style.borderColor = '#6b7280';
@@ -280,16 +351,18 @@ export default function Home() {
                     top: '50%',
                     transform: 'translateY(-50%)',
                     border: 'none',
-                    background: '#4b5563', // Gray-600
+                    background: '#4b5563',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    padding: '8px',
+                    padding: isMobile ? '10px' : '8px',
                     color: '#9ca3af',
                     outline: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.3s ease',
+                    minWidth: isMobile ? '44px' : 'auto',
+                    minHeight: isMobile ? '44px' : 'auto',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = '#6b7280';
@@ -300,7 +373,7 @@ export default function Home() {
                     e.currentTarget.style.color = '#9ca3af';
                   }}
                 >
-                  {showPassword ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
+                  {showPassword ? <FaEyeSlash size={isMobile ? 16 : 14} /> : <FaEye size={isMobile ? 16 : 14} />}
                 </button>
               </div>
             </div>
@@ -341,18 +414,19 @@ export default function Home() {
           </form>
         </div>
 
-        {/* Right Side - QR Code */}
+        {/* QR Code Section */}
         <div style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '20px',
+          gap: isMobile ? '16px' : '20px',
+          width: isMobile ? '100%' : 'auto',
         }}>
           <div style={{
-            borderRadius: '16px',
+            borderRadius: isMobile ? '12px' : '16px',
             background: '#ffffff',
-            width: '240px',
-            height: '240px',
+            width: `${qrSize}px`,
+            height: `${qrSize}px`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -361,10 +435,11 @@ export default function Home() {
               0 4px 6px -2px rgba(0, 0, 0, 0.2)
             `,
             border: '1px solid #374151',
+            margin: isMobile ? '0 auto' : '0',
           }}>
             <div ref={qrRef} style={{
-              width: '200px',
-              height: '200px',
+              width: `${qrContentSize}px`,
+              height: `${qrContentSize}px`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -376,14 +451,15 @@ export default function Home() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: isMobile ? '16px' : '12px',
             width: '100%',
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '13px',
+              gap: isMobile ? '12px' : '8px',
+              fontSize: isMobile ? '14px' : '13px',
+              flexDirection: isMobile ? 'column' : 'row',
             }}>
               <label style={{
                 color: '#d1d5db',
@@ -396,16 +472,17 @@ export default function Home() {
                 value={qrResolution}
                 onChange={(e) => setQrResolution(Number(e.target.value))}
                 style={{
-                  padding: '8px 12px',
+                  padding: isMobile ? '12px 16px' : '8px 12px',
                   borderRadius: '6px',
                   border: '1px solid #4b5563',
                   background: '#374151',
                   color: '#f9fafb',
-                  fontSize: '13px',
+                  fontSize: isMobile ? '14px' : '13px',
                   fontWeight: '400',
                   outline: 'none',
                   appearance: 'none',
                   cursor: 'pointer',
+                  minWidth: isMobile ? '140px' : 'auto',
                 }}
               >
                 <option value={256}>256x256</option>
@@ -423,15 +500,15 @@ export default function Home() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '12px 20px',
+                padding: isMobile ? '16px 24px' : '12px 20px',
                 borderRadius: '8px',
                 border: 'none',
                 background: isGenerating 
                   ? '#4b5563' 
-                  : '#6b7280', // Gray-500
+                  : '#6b7280',
                 color: '#ffffff',
                 fontWeight: '600',
-                fontSize: '14px',
+                fontSize: isMobile ? '16px' : '14px',
                 cursor: isGenerating ? 'not-allowed' : 'pointer',
                 outline: 'none',
                 transition: 'all 0.3s ease',
@@ -442,6 +519,7 @@ export default function Home() {
                 letterSpacing: '0.025em',
                 width: '100%',
                 justifyContent: 'center',
+                minHeight: isMobile ? '52px' : 'auto',
               }}
               onMouseEnter={(e) => {
                 if (!isGenerating) {
@@ -458,7 +536,7 @@ export default function Home() {
                 }
               }}
             >
-              <FaDownload size={12} />
+              <FaDownload size={isMobile ? 14 : 12} />
               {isGenerating ? 'Generando...' : 'Descargar'}
             </button>
           </div>
